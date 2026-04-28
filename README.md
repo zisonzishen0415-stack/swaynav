@@ -68,27 +68,49 @@ sudo make install
 sudo ydotoold
 ```
 
-2. Add to your compositor config:
+2. Configure keybinding in your compositor:
 
 **Sway** (`~/.config/sway/config`):
 ```
-exec swaynav                           # Start daemon at login
 bindsym ctrl+semicolon exec swaynav toggle
 ```
 
 **Hyprland** (`~/.config/hypr/hyprland.conf`):
 ```
-exec-once = swaynav
 bind = CTRL, semicolon, exec, swaynav toggle
 ```
 
 **river** (`~/.config/river/init`):
 ```
-riverctl spawn "swaynav"
 riverctl map normal Ctrl Semicolon spawn "swaynav toggle"
 ```
 
 3. Press `Ctrl+;` to activate swaynav
+
+### Autostart
+
+**Option 1: Compositor config** (recommended for compositor-specific setups)
+
+Add to your compositor config:
+
+**Sway**: `exec swaynav`
+
+**Hyprland**: `exec-once = swaynav`
+
+**river**: `riverctl spawn "swaynav"`
+
+**Option 2: systemd** (universal, works with any compositor)
+
+```bash
+# Install ydotoold service (required dependency)
+sudo cp data/ydotoold.service /etc/systemd/system/
+sudo systemctl enable --now ydotoold
+
+# Setup swaynav user service
+mkdir -p ~/.config/systemd/user/
+cp data/swaynav.service ~/.config/systemd/user/
+systemctl --user enable --now swaynav
+```
 
 ### Default Keybindings
 
@@ -196,27 +218,49 @@ sudo make install
 sudo ydotoold
 ```
 
-2. 添加到合成器配置文件:
+2. 在合成器中配置快捷键:
 
 **Sway** (`~/.config/sway/config`):
 ```
-exec swaynav                           # 登录时启动守护进程
 bindsym ctrl+semicolon exec swaynav toggle
 ```
 
 **Hyprland** (`~/.config/hypr/hyprland.conf`):
 ```
-exec-once = swaynav
 bind = CTRL, semicolon, exec, swaynav toggle
 ```
 
 **river** (`~/.config/river/init`):
 ```
-riverctl spawn "swaynav"
 riverctl map normal Ctrl Semicolon spawn "swaynav toggle"
 ```
 
 3. 按 `Ctrl+;` 激活 swaynav
+
+### 开机自启动
+
+**方式一：合成器配置** (推荐，针对特定合成器)
+
+添加到合成器配置文件：
+
+**Sway**: `exec swaynav`
+
+**Hyprland**: `exec-once = swaynav`
+
+**river**: `riverctl spawn "swaynav"`
+
+**方式二：systemd** (通用，适用于任何合成器)
+
+```bash
+# 安装 ydotoold 服务 (必需依赖)
+sudo cp data/ydotoold.service /etc/systemd/system/
+sudo systemctl enable --now ydotoold
+
+# 配置 swaynav 用户服务
+mkdir -p ~/.config/systemd/user/
+cp data/swaynav.service ~/.config/systemd/user/
+systemctl --user enable --now swaynav
+```
 
 ### 默认快捷键
 
