@@ -7,20 +7,39 @@
 <a name="english"></a>
 ## English
 
-Keyboard-driven mouse control for Sway/Wayland. A keynav clone for Wayland compositors.
+Keyboard-driven mouse control for Wayland. A keynav clone for Wayland compositors.
+
+### Compatibility
+
+Works on any Wayland compositor that supports `gtk-layer-shell`:
+- **Sway** (full support)
+- **Hyprland** (core features)
+- **river** (core features)
+- **labwc** (core features)
+- **wayfire** (core features)
+
+| Feature | Sway | Other Compositors |
+|---------|------|-------------------|
+| Grid navigation | ✓ | ✓ |
+| Mouse click/drag | ✓ | ✓ |
+| Multi-monitor | ✓ | ✓ |
+| Custom keybindings | ✓ | ✓ |
+| Macro recording | ✓ | ✓ |
+| `windowzoom` | ✓ | ✗ |
+| `cursorzoom` | ✓ | ✗ |
 
 ### Features
 
 - Vim-style keyboard navigation for mouse pointer
 - Grid-based cursor positioning
-- Multi-monitor support via Sway IPC
+- Multi-monitor support (GDK-based, universal)
 - Customizable keybindings
 - Macro recording and playback
 - Undo/redo for grid operations
 
 ### Requirements
 
-- Sway compositor
+- Wayland compositor with gtk-layer-shell support
 - Dependencies: `libgtk-3-dev`, `libgtk-layer-shell-dev`, `libjson-c-dev`
 - Runtime: `ydotool` (for mouse control)
 
@@ -47,18 +66,27 @@ sudo make install
 sudo ydotoold
 ```
 
-2. Add to your Sway config (`~/.config/sway/config`):
+2. Add to your compositor config:
+
+**Sway** (`~/.config/sway/config`):
 ```
 exec swaynav                           # Start daemon at login
 bindsym ctrl+semicolon exec swaynav toggle
 ```
 
-3. Reload Sway config:
-```bash
-swaymsg reload
+**Hyprland** (`~/.config/hypr/hyprland.conf`):
+```
+exec-once = swaynav
+bind = CTRL, semicolon, exec, swaynav toggle
 ```
 
-4. Press `Ctrl+;` to activate swaynav
+**river** (`~/.config/river/init`):
+```
+riverctl spawn "swaynav"
+riverctl map normal Ctrl Semicolon spawn "swaynav toggle"
+```
+
+3. Press `Ctrl+;` to activate swaynav
 
 ### Default Keybindings
 
@@ -70,7 +98,7 @@ swaymsg reload
 | `Space/Enter` | Warp cursor and click |
 | `w` | Warp cursor only |
 | `Escape` | End |
-| `t` | Zoom to window |
+| `t` | Zoom to window (Sway only) |
 | `a` | Undo |
 | `q` | Record macro |
 | `Shift+@` | Playback macro |
@@ -94,7 +122,7 @@ CLI commands:
 - `swaynav toggle` - Toggle overlay
 - `swaynav quit` - Quit daemon
 
-Config commands: `cut-*`, `move-*`, `warp`, `click N`, `drag`, `windowzoom`, `cursorzoom`, `history-back`, `record`, `playback`, `sh`
+Config commands: `cut-*`, `move-*`, `warp`, `click N`, `drag`, `windowzoom` (Sway), `cursorzoom` (Sway), `history-back`, `record`, `playback`, `sh`
 
 ### License
 
@@ -105,20 +133,39 @@ MIT License
 <a name="chinese"></a>
 ## 中文
 
-适用于 Sway/Wayland 的键盘驱动鼠标控制工具。keynav 的 Wayland 版本。
+适用于 Wayland 的键盘驱动鼠标控制工具。keynav 的 Wayland 版本。
+
+### 兼容性
+
+支持任何实现了 `gtk-layer-shell` 的 Wayland 合成器：
+- **Sway** (完整支持)
+- **Hyprland** (核心功能)
+- **river** (核心功能)
+- **labwc** (核心功能)
+- **wayfire** (核心功能)
+
+| 功能 | Sway | 其他合成器 |
+|------|------|-----------|
+| 网格导航 | ✓ | ✓ |
+| 鼠标点击/拖拽 | ✓ | ✓ |
+| 多显示器 | ✓ | ✓ |
+| 自定义快捷键 | ✓ | ✓ |
+| 宏录制 | ✓ | ✓ |
+| `windowzoom` | ✓ | ✗ |
+| `cursorzoom` | ✓ | ✗ |
 
 ### 功能特性
 
 - Vim 风格的键盘导航鼠标指针
 - 基于网格的精确定位
-- 通过 Sway IPC 支持多显示器
+- 多显示器支持 (基于 GDK，通用)
 - 可自定义快捷键
 - 宏录制和回放
 - 撤销/重做操作
 
 ### 依赖
 
-- Sway 合成器
+- 支持 gtk-layer-shell 的 Wayland 合成器
 - 编译依赖: `libgtk-3-dev`, `libgtk-layer-shell-dev`, `libjson-c-dev`
 - 运行时依赖: `ydotool` (用于鼠标控制)
 
@@ -145,18 +192,27 @@ sudo make install
 sudo ydotoold
 ```
 
-2. 添加到 Sway 配置文件 (`~/.config/sway/config`):
+2. 添加到合成器配置文件:
+
+**Sway** (`~/.config/sway/config`):
 ```
 exec swaynav                           # 登录时启动守护进程
 bindsym ctrl+semicolon exec swaynav toggle
 ```
 
-3. 重新加载 Sway 配置:
-```bash
-swaymsg reload
+**Hyprland** (`~/.config/hypr/hyprland.conf`):
+```
+exec-once = swaynav
+bind = CTRL, semicolon, exec, swaynav toggle
 ```
 
-4. 按 `Ctrl+;` 激活 swaynav
+**river** (`~/.config/river/init`):
+```
+riverctl spawn "swaynav"
+riverctl map normal Ctrl Semicolon spawn "swaynav toggle"
+```
+
+3. 按 `Ctrl+;` 激活 swaynav
 
 ### 默认快捷键
 
@@ -168,7 +224,7 @@ swaymsg reload
 | `空格/回车` | 移动光标并点击 |
 | `w` | 仅移动光标 |
 | `Esc` | 结束 |
-| `t` | 缩放到窗口 |
+| `t` | 缩放到窗口 (仅 Sway) |
 | `a` | 撤销 |
 | `q` | 录制宏 |
 | `Shift+@` | 回放宏 |
@@ -192,7 +248,7 @@ CLI 命令:
 - `swaynav toggle` - 切换覆盖层
 - `swaynav quit` - 退出守护进程
 
-配置命令: `cut-*`, `move-*`, `warp`, `click N`, `drag`, `windowzoom`, `cursorzoom`, `history-back`, `record`, `playback`, `sh`
+配置命令: `cut-*`, `move-*`, `warp`, `click N`, `drag`, `windowzoom` (仅 Sway), `cursorzoom` (仅 Sway), `history-back`, `record`, `playback`, `sh`
 
 ### 许可证
 
