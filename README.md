@@ -9,6 +9,8 @@
 
 Keyboard-driven mouse control for Wayland. A keynav clone for Wayland compositors.
 
+> **Keywords**: mouseless, keyboard-only, pointer control, cursor navigation, RSI, ergonomics, accessibility, keynav alternative, warpd alternative, tiling wm tools, wayland mouse control, sway mouse, hyprland mouse, vim-style mouse
+
 ### Compatibility
 
 Works on any Wayland compositor that supports `gtk-layer-shell`:
@@ -134,6 +136,8 @@ MIT License
 ## 中文
 
 适用于 Wayland 的键盘驱动鼠标控制工具。keynav 的 Wayland 版本。
+
+> **关键词**: 无鼠标操作, 键盘控制鼠标, 光标导航, 辅助功能, 无障碍, RSI, 腱鞘炎预防, keynav替代, sway鼠标控制, hyprland鼠标控制, vim风格鼠标, 网格定位鼠标
 
 ### 兼容性
 
