@@ -1,0 +1,13 @@
+[Unit]
+Description=ydotool daemon
+Documentation=https://github.com/ReimuNotMoe/ydotool
+After=graphical.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/ydotoold
+ExecStartPost=/bin/chmod 666 /tmp/.ydotool_socket
+Restart=on-failure
+
+[Install]
+WantedBy=graphical.target

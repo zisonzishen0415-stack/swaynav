@@ -1,0 +1,22 @@
+# Build artifacts
+obj/
+bin/
+
+# Reference project (original keynav for X11)
+keynav/
+
+# AI assistant files
+AGENTS.md
+CLAUDE.md
+GEMINI.md
+docs/superpowers/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db

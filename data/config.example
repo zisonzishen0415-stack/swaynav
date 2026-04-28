@@ -1,0 +1,80 @@
+# swaynav example configuration
+# Copy to ~/.config/swaynav/config
+
+# Activation - requires Sway bindsym
+# Add to ~/.config/sway/config:
+#   bindsym ctrl+semicolon exec swaynav start
+
+# End commands
+Escape end
+ctrl+[ end
+
+# Cut (shrink selection) - vim style
+h cut-left
+j cut-down
+k cut-up
+l cut-right
+y cut-left,cut-up
+u cut-right,cut-up
+b cut-left,cut-down
+n cut-right,cut-down
+
+# Move (shift selection)
+shift+h move-left
+shift+j move-down
+shift+k move-up
+shift+l move-right
+shift+y move-left,move-up
+shift+u move-right,move-up
+shift+b move-left,move-down
+shift+n move-right,move-down
+
+# Mouse operations
+space warp,click 1,end
+Return warp,click 1,end
+semicolon warp,end
+w warp
+1 click 1
+2 click 2
+3 click 3
+4 click 4
+5 click 5
+
+# Zoom
+t windowzoom
+c cursorzoom 300 300
+
+# Recording
+q record ~/.config/swaynav/recordings
+shift+@ playback
+
+# History (undo)
+a history-back
+
+# Arrow keys (alternative)
+Left cut-left
+Down cut-down
+Up cut-up
+Right cut-right
+shift+Left move-left
+shift+Down move-down
+shift+Up move-up
+shift+Right move-right
+
+# Ctrl variants
+ctrl+h cut-left
+ctrl+j cut-down
+ctrl+k cut-up
+ctrl+l cut-right
+ctrl+y cut-left,cut-up
+ctrl+u cut-right,cut-up
+ctrl+b cut-left,cut-down
+ctrl+n cut-right,cut-down
+
+# Scroll with i and e
+i click 4
+e click 5
+
+# Example shell commands
+# g sh "swaymsg focus output eDP-1"
+# v sh "ydotool key 42"  # paste
