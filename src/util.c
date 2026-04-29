@@ -65,14 +65,12 @@ char *safe_strdup(const char *str) {
 }
 
 int check_ydotoold(void) {
-    /* Check if ydotoold socket exists */
     struct stat st;
-    if (stat("/tmp/ydotoold.sock", &st) == 0) {
-        return 1;
-    }
-
-    /* Also check common alternative paths */
+    
+    /* Check current ydotoold socket paths */
     const char *paths[] = {
+        "/tmp/.ydotool_socket",  /* current default */
+        "/tmp/ydotoold.sock",    /* old name */
         "/run/ydotoold.sock",
         "/var/run/ydotoold.sock",
         NULL

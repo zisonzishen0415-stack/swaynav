@@ -6,8 +6,9 @@ After=graphical.target
 [Service]
 Type=simple
 ExecStart=/usr/bin/ydotoold
-ExecStartPost=/bin/chmod 666 /tmp/.ydotool_socket
+ExecStartPost=+/bin/sh -c 'sleep 0.5 && chmod 666 /tmp/.ydotool_socket'
 Restart=on-failure
+RestartSec=3
 
 [Install]
 WantedBy=graphical.target
