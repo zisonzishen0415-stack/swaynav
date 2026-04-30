@@ -137,6 +137,32 @@ cp data/config.example ~/.config/swaynav/config
 
 Config file: `~/.config/swaynav/config`
 
+### Custom Colors
+
+Colors are defined in `src/overlay.c`. To customize, edit these macros and rebuild:
+
+```c
+/* Example: change to your preferred color */
+#define GRUVBOX_BLUE_R 0.27  /* Red component (0.0-1.0) */
+#define GRUVBOX_BLUE_G 0.53  /* Green component */
+#define GRUVBOX_BLUE_B 0.53  /* Blue component */
+```
+
+Popular color presets:
+
+| Theme | RGB Values | Hex |
+|-------|------------|-----|
+| Gruvbox Blue | 0.27, 0.53, 0.53 | #458588 |
+| Gruvbox Green | 0.72, 0.73, 0.15 | #b8bb26 |
+| Gruvbox Orange | 0.84, 0.37, 0.06 | #d65d0e |
+| Catppuccin Blue | 0.51, 0.51, 0.67 | #89b4fa |
+| Nord Blue | 0.44, 0.55, 0.68 | #81a1c1 |
+
+After editing:
+```bash
+make && cp bin/swaynav ~/.local/bin/swaynav
+```
+
 ### Commands
 
 CLI commands:
@@ -286,6 +312,32 @@ cp data/config.example ~/.config/swaynav/config
 ```
 
 配置文件: `~/.config/swaynav/config`
+
+### 自定义颜色
+
+颜色定义在 `src/overlay.c` 中。自定义颜色需修改以下宏并重新编译：
+
+```c
+/* 示例：更改为你喜欢的颜色 */
+#define GRUVBOX_BLUE_R 0.27  /* 红色分量 (0.0-1.0) */
+#define GRUVBOX_BLUE_G 0.53  /* 绿色分量 */
+#define GRUVBOX_BLUE_B 0.53  /* 蓝色分量 */
+```
+
+常用颜色预设：
+
+| 主题 | RGB 值 | Hex |
+|------|--------|-----|
+| Gruvbox 蓝 | 0.27, 0.53, 0.53 | #458588 |
+| Gruvbox 绿 | 0.72, 0.73, 0.15 | #b8bb26 |
+| Gruvbox 橙 | 0.84, 0.37, 0.06 | #d65d0e |
+| Catppuccin 蓝 | 0.51, 0.51, 0.67 | #89b4fa |
+| Nord 蓝 | 0.44, 0.55, 0.68 | #81a1c1 |
+
+修改后重新编译：
+```bash
+make && cp bin/swaynav ~/.local/bin/swaynav
+```
 
 ### 命令
 
