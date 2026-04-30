@@ -5,7 +5,18 @@
 #include "swayipc.h"
 #include <gtk-layer-shell.h>
 #include <cairo.h>
+#include <math.h>
 #include <string.h>
+
+/* Gruvbox Light theme colors */
+#define GRUVBOX_FG_R 0.235  /* #3c3836 */
+#define GRUVBOX_FG_G 0.220
+#define GRUVBOX_FG_B 0.212
+
+/* Gruvbox bright blue - #458588 */
+#define GRUVBOX_BLUE_R 0.27
+#define GRUVBOX_BLUE_G 0.53
+#define GRUVBOX_BLUE_B 0.53
 
 static AppState *g_state = NULL;
 static GtkWidget *g_window = NULL;
@@ -19,31 +30,30 @@ static void draw_grid(cairo_t *cr, AppState *as) {
     double sw = sel->w;
     double sh = sel->h;
 
-    /* Draw keynav-style crosshair lines */
-    cairo_set_source_rgba(cr, 0.0, 1.0, 1.0, 0.8);
-    cairo_set_line_width(cr, 2.0);
-
-    /* Horizontal line through center */
+    double cx = sx + sw / 2;
     double cy = sy + sh / 2;
+
+    /* Crosshair lines - solid blue */
+    cairo_set_source_rgb(cr, GRUVBOX_BLUE_R, GRUVBOX_BLUE_G, GRUVBOX_BLUE_B);
+    cairo_set_line_width(cr, 2.5);
+
     cairo_move_to(cr, 0, cy);
     cairo_line_to(cr, out->w, cy);
     cairo_stroke(cr);
 
-    /* Vertical line through center */
-    double cx = sx + sw / 2;
     cairo_move_to(cr, cx, 0);
     cairo_line_to(cr, cx, out->h);
     cairo_stroke(cr);
 
-    /* Selection rectangle border */
-    cairo_set_source_rgba(cr, 0.0, 1.0, 1.0, 1.0);
-    cairo_set_line_width(cr, 3.0);
+    /* Selection rectangle border - solid blue */
+    cairo_set_source_rgb(cr, GRUVBOX_BLUE_R, GRUVBOX_BLUE_G, GRUVBOX_BLUE_B);
+    cairo_set_line_width(cr, 3.5);
     cairo_rectangle(cr, sx, sy, sw, sh);
     cairo_stroke(cr);
 
-    /* Corner markers */
-    cairo_set_line_width(cr, 2.0);
-    int marker_len = 15;
+    /* Corner markers - thick, clean */
+    cairo_set_line_width(cr, 3.5);
+    int marker_len = 20;
 
     cairo_move_to(cr, sx, sy + marker_len);
     cairo_line_to(cr, sx, sy);
@@ -67,7 +77,8 @@ static void draw_grid(cairo_t *cr, AppState *as) {
 
     /* Grid lines */
     if (as->grid.grid_cols > 1 || as->grid.grid_rows > 1) {
-        cairo_set_source_rgba(cr, 0.5, 0.5, 0.5, 0.5);
+        cairo_set_source_rgb(cr, GRUVBOX_BLUE_R, GRUVBOX_BLUE_G, GRUVBOX_BLUE_B);
+        cairo_set_line_width(cr, 1.5);
         cairo_set_line_width(cr, 1.0);
 
         int cell_w = sw / as->grid.grid_cols;
@@ -110,11 +121,13 @@ static void draw_grid(cairo_t *cr, AppState *as) {
                 cairo_text_extents_t extents;
                 cairo_text_extents(cr, label, &extents);
 
-                cairo_set_source_rgba(cr, 0.2, 0.2, 0.3, 0.8);
+                /* Label background - blue */
+                cairo_set_source_rgb(cr, GRUVBOX_BLUE_R, GRUVBOX_BLUE_G, GRUVBOX_BLUE_B);
                 cairo_rectangle(cr, lcx - extents.width/2 - 5, lcy - extents.height/2 - 3, extents.width + 10, extents.height + 6);
                 cairo_fill(cr);
 
-                cairo_set_source_rgb(cr, 1.0, 1.0, 1.0);
+                /* Label text - dark for contrast */
+                cairo_set_source_rgb(cr, 0.1, 0.1, 0.1);
                 cairo_move_to(cr, lcx - extents.width/2, lcy + extents.height/2);
                 cairo_show_text(cr, label);
             }

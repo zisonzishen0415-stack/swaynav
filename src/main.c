@@ -16,6 +16,7 @@
 #include <fcntl.h>
 
 #define SOCKET_PATH "/tmp/swaynav.sock"
+#define MAX_DISPLAY_WAIT 30  /* seconds to wait for display */
 
 static AppState app_state;
 static GtkWidget *overlay_window = NULL;
@@ -174,9 +175,35 @@ static void print_usage(void) {
     printf("  end        Hide overlay\n");
     printf("  toggle     Toggle overlay\n");
     printf("  quit       Quit daemon\n\n");
-    printf("Add to ~/.config/sway/config:\n");
-    printf("  exec swaynav  # start daemon at login\n");
-    printf("  bindsym ctrl+semicolon exec swaynav toggle\n\n");
+    printf("Add to your Wayland compositor config:\n");
+    printf("  Sway: exec swaynav\n");
+    printf("  Hyprland: exec-once = swaynav\n");
+    printf("  River: riverctl spawn swaynav\n\n");
+}
+
+/* Wait for Wayland display to be available */
+static int wait_for_display(void) {
+    const char *wayland_display = getenv("WAYLAND_DISPLAY");
+    const char *xdisplay = getenv("DISPLAY");
+
+    if (wayland_display || xdisplay) {
+        return 0;  /* Already available */
+    }
+
+    fprintf(stderr, "swaynav: waiting for display (up to %d seconds)...\n", MAX_DISPLAY_WAIT);
+
+    for (int i = 0; i < MAX_DISPLAY_WAIT; i++) {
+        sleep(1);
+        wayland_display = getenv("WAYLAND_DISPLAY");
+        xdisplay = getenv("DISPLAY");
+        if (wayland_display || xdisplay) {
+            fprintf(stderr, "swaynav: display available after %d seconds\n", i + 1);
+            return 0;
+        }
+    }
+
+    fprintf(stderr, "swaynav: timeout waiting for display\n");
+    return -1;
 }
 
 int main(int argc, char **argv) {
@@ -198,7 +225,17 @@ int main(int argc, char **argv) {
     /* Start daemon */
     fprintf(stderr, "swaynav: starting daemon...\n");
 
-    gtk_init(&argc, &argv);
+    /* Wait for display to be available (for systemd service startup) */
+    if (wait_for_display() < 0) {
+        fprintf(stderr, "swaynav: no display available, exiting\n");
+        return 1;
+    }
+
+    /* Use gtk_init_check to avoid abort on failure */
+    if (!gtk_init_check(&argc, &argv)) {
+        fprintf(stderr, "swaynav: gtk_init failed\n");
+        return 1;
+    }
 
     signal(SIGTERM, sighandler);
     signal(SIGINT, sighandler);
