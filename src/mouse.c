@@ -21,12 +21,9 @@ static int run_ydotool_async(const char *tool, const char *arg1, const char *arg
 }
 
 int mouse_move(int x, int y) {
-    int scaled_x = x / 2;
-    int scaled_y = y / 2;
-
     char sx[16], sy[16];
-    snprintf(sx, sizeof(sx), "%d", scaled_x);
-    snprintf(sy, sizeof(sy), "%d", scaled_y);
+    snprintf(sx, sizeof(sx), "%d", x);
+    snprintf(sy, sizeof(sy), "%d", y);
 
     return run_ydotool_async("mousemove", sx, sy);
 }
