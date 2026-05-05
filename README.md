@@ -45,6 +45,8 @@ Works on any Wayland compositor that supports `gtk-layer-shell`:
 - Dependencies: `libgtk-3-dev`, `libgtk-layer-shell-dev`, `libjson-c-dev`
 - Runtime: `ydotool` (for mouse control)
 
+> **Important**: ydotoold virtual device should have `pointer_accel 0` for accurate cursor positioning. If your compositor applies pointer acceleration by default (e.g., Sway's `input type:pointer`), you must configure the ydotoold device separately. See [Pointer Acceleration Configuration](#pointer-acceleration-configuration).
+
 ### Installation
 
 ```bash
@@ -111,6 +113,41 @@ mkdir -p ~/.config/systemd/user/
 cp data/swaynav.service ~/.config/systemd/user/
 systemctl --user enable --now swaynav
 ```
+
+### Pointer Acceleration Configuration
+
+ydotoold creates a virtual pointer device. If your compositor applies pointer acceleration to all pointer devices, cursor positioning will be inaccurate. You need to configure `pointer_accel 0` for the ydotoold device.
+
+**Sway** (`~/.config/sway/config`):
+```
+# ydotoold virtual device needs pointer_accel 0 for accurate positioning
+input 9011:26214:ydotoold_virtual_device {
+    pointer_accel 0
+}
+```
+
+**Hyprland** (`~/.config/hypr/hyprland.conf`):
+```
+# ydotoold virtual device needs no acceleration
+input-device {
+    name = ydotoold virtual device
+    accel_profile = flat
+    sensitivity = 0
+}
+```
+
+**river**: Uses libinput defaults. If acceleration is applied, configure via `libinput` rules in your init script.
+
+**Diagnose**: Check if pointer_accel is applied:
+```bash
+# Sway
+swaymsg -t get_inputs | jq '.[] | select(.identifier | contains("ydotoold")) | .libinput.accel_speed'
+
+# Hyprland
+hyprctl devices | grep -A5 "ydotoold"
+```
+
+If the value is not `0`, you need to configure it as shown above.
 
 ### Default Keybindings
 
@@ -221,6 +258,8 @@ MIT License
 - 编译依赖: `libgtk-3-dev`, `libgtk-layer-shell-dev`, `libjson-c-dev`
 - 运行时依赖: `ydotool` (用于鼠标控制)
 
+> **重要提示**: ydotoold 虚拟设备需要设置 `pointer_accel 0` 才能准确定位。如果你的合成器默认应用指针加速（如 Sway 的 `input type:pointer`），必须为 ydotoold 设备单独配置。详见 [指针加速配置](#指针加速配置)。
+
 ### 安装
 
 ```bash
@@ -287,6 +326,41 @@ mkdir -p ~/.config/systemd/user/
 cp data/swaynav.service ~/.config/systemd/user/
 systemctl --user enable --now swaynav
 ```
+
+### 指针加速配置
+
+ydotoold 创建一个虚拟指针设备。如果你的合成器对所有指针设备应用指针加速，光标定位将不准确。你需要为 ydotoold 设备配置 `pointer_accel 0`。
+
+**Sway** (`~/.config/sway/config`):
+```
+# ydotoold 虚拟设备需要 pointer_accel 0 才能准确定位
+input 9011:26214:ydotoold_virtual_device {
+    pointer_accel 0
+}
+```
+
+**Hyprland** (`~/.config/hypr/hyprland.conf`):
+```
+# ydotoold 虚拟设备不需要加速
+input-device {
+    name = ydotoold virtual device
+    accel_profile = flat
+    sensitivity = 0
+}
+```
+
+**river**: 使用 libinput 默认值。如果应用了加速，在 init 脚本中通过 `libinput` 规则配置。
+
+**诊断**: 检查是否应用了 pointer_accel:
+```bash
+# Sway
+swaymsg -t get_inputs | jq '.[] | select(.identifier | contains("ydotoold")) | .libinput.accel_speed'
+
+# Hyprland
+hyprctl devices | grep -A5 "ydotoold"
+```
+
+如果值不为 `0`，需要按上述方式配置。
 
 ### 默认快捷键
 
