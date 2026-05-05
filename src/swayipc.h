@@ -26,7 +26,17 @@ typedef struct {
 /* IPC message types */
 #define IPC_GET_OUTPUTS    3
 #define IPC_GET_TREE       4
+#define IPC_GET_INPUTS     9
 #define IPC_GET_SEATS      12
+
+/* Check if running under Sway */
+int swayipc_is_sway(void);
+
+/* Get ydotoold device pointer_accel value, returns -999 if not found/error */
+float swayipc_get_ydotoold_accel(void);
+
+/* Set ydotoold device pointer_accel to 0, returns 0 on success */
+int swayipc_set_ydotoold_accel_zero(void);
 
 /* Connect to Sway IPC socket */
 int swayipc_connect(void);

@@ -245,6 +245,19 @@ int main(int argc, char **argv) {
     config_load_default(&app_state.config);
     fprintf(stderr, "swaynav: %d keybindings loaded\n", app_state.config.keybinds.count);
 
+    /* Check and fix ydotoold pointer_accel if needed */
+    float accel = swayipc_get_ydotoold_accel();
+    if (accel != -999 && accel != 0.0f) {
+        fprintf(stderr, "swaynav: ydotoold pointer_accel=%.2f, attempting to fix...\n", accel);
+        if (swayipc_set_ydotoold_accel_zero() == 0) {
+            fprintf(stderr, "swaynav: configured ydotoold pointer_accel to 0\n");
+        } else {
+            fprintf(stderr, "swaynav: WARNING: could not set pointer_accel, cursor may be inaccurate\n");
+            fprintf(stderr, "swaynav: add to your Sway config:\n");
+            fprintf(stderr, "  input 9011:26214:ydotoold_virtual_device { pointer_accel 0 }\n");
+        }
+    }
+
     history_init(&app_state.history);
     recorder_init(&app_state.recorder, "~/.config/swaynav/recordings");
     app_state.active = 0;
