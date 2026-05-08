@@ -28,6 +28,9 @@ static void show_overlay(void) {
         grid_reset(&app_state.grid);
         history_clear(&app_state.history);
         history_save(&app_state.history, &app_state.grid.selection);
+        int cx, cy;
+        grid_get_center(&app_state.grid, &cx, &cy);
+        mouse_move(cx, cy);
         gtk_widget_show_all(overlay_window);
         gtk_window_present(GTK_WINDOW(overlay_window));
     }
@@ -245,16 +248,18 @@ int main(int argc, char **argv) {
     config_load_default(&app_state.config);
     fprintf(stderr, "swaynav: %d keybindings loaded\n", app_state.config.keybinds.count);
 
-    /* Check and fix ydotoold pointer_accel if needed */
-    float accel = swayipc_get_ydotoold_accel();
-    if (accel != -999 && accel != 0.0f) {
-        fprintf(stderr, "swaynav: ydotoold pointer_accel=%.2f, attempting to fix...\n", accel);
+    /* Ensure ydotoold has correct settings for accurate cursor positioning */
+    if (swayipc_is_sway()) {
+        fprintf(stderr, "swaynav: configuring ydotoold for accurate positioning...\n");
         if (swayipc_set_ydotoold_accel_zero() == 0) {
-            fprintf(stderr, "swaynav: configured ydotoold pointer_accel to 0\n");
+            fprintf(stderr, "swaynav: configured ydotoold: pointer_accel 0, accel_profile flat\n");
         } else {
-            fprintf(stderr, "swaynav: WARNING: could not set pointer_accel, cursor may be inaccurate\n");
+            fprintf(stderr, "swaynav: WARNING: could not configure ydotoold, cursor may be inaccurate\n");
             fprintf(stderr, "swaynav: add to your Sway config:\n");
-            fprintf(stderr, "  input 9011:26214:ydotoold_virtual_device { pointer_accel 0 }\n");
+            fprintf(stderr, "  input 9011:26214:ydotoold_virtual_device {\n");
+            fprintf(stderr, "    pointer_accel 0\n");
+            fprintf(stderr, "    accel_profile flat\n");
+            fprintf(stderr, "  }\n");
         }
     }
 

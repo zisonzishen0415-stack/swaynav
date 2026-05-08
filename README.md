@@ -11,6 +11,13 @@ Keyboard-driven mouse control for Wayland. A keynav clone for Wayland compositor
 
 > **Keywords**: mouseless, keyboard-only, pointer control, cursor navigation, RSI, ergonomics, accessibility, keynav alternative, warpd alternative, tiling wm tools, wayland mouse control, sway mouse, hyprland mouse, vim-style mouse
 
+### Recent Changes
+
+- **Auto-configuration for Sway**: swaynav now automatically configures ydotoold device settings (`pointer_accel 0` + `accel_profile flat`) on startup. No manual configuration needed for Sway users.
+- **Critical fix**: Added `accel_profile flat` setting - this is essential for accurate cursor positioning. Previously only `pointer_accel 0` was set, which wasn sufficient.
+- **Cursor positioning fix**: Fixed cursor not following crosshair center on toggle activation.
+- **Zero delay**: Added `--delay 0` to ydotool mousemove for instant cursor response.
+
 ### Compatibility
 
 Works on any Wayland compositor that supports `gtk-layer-shell`:
@@ -116,19 +123,24 @@ systemctl --user enable --now swaynav
 
 ### Pointer Acceleration Configuration
 
-ydotoold creates a virtual pointer device. If your compositor applies pointer acceleration to all pointer devices, cursor positioning will be inaccurate. You need to configure `pointer_accel 0` for the ydotoold device.
+ydotoold creates a virtual pointer device. For accurate cursor positioning, you must configure both `pointer_accel 0` and `accel_profile flat`. The `flat` profile is critical - without it, ydotool's absolute coordinates won match the actual cursor position.
 
-**Sway** (`~/.config/sway/config`):
+**Sway Users**: swaynav automatically configures ydotoold on startup. No manual configuration needed. If configuration fails, swaynav will print a warning with manual config instructions.
+
+**Other Compositors** (Hyprland, river, etc.): You must manually configure ydotoold device settings.
+
+**Sway** (manual config, if auto-config fails):
 ```
-# ydotoold virtual device needs pointer_accel 0 for accurate positioning
+# ydotoold virtual device requires flat acceleration profile for accurate positioning
 input 9011:26214:ydotoold_virtual_device {
     pointer_accel 0
+    accel_profile flat
 }
 ```
 
 **Hyprland** (`~/.config/hypr/hyprland.conf`):
 ```
-# ydotoold virtual device needs no acceleration
+# ydotoold virtual device needs flat acceleration profile
 input-device {
     name = ydotoold virtual device
     accel_profile = flat
@@ -136,18 +148,20 @@ input-device {
 }
 ```
 
-**river**: Uses libinput defaults. If acceleration is applied, configure via `libinput` rules in your init script.
+**river**: Uses libinput defaults. Configure via `libinput` rules in your init script if needed.
 
-**Diagnose**: Check if pointer_accel is applied:
+**Why flat profile matters**: ydotool sends absolute coordinates (e.g., "move to (500, 500)"). With `adaptive` profile, the compositor applies acceleration based on movement speed/distance, causing the cursor to land at a different position. With `flat` profile, coordinates are applied exactly.
+
+**Diagnose**: Check current settings:
 ```bash
-# Sway
-swaymsg -t get_inputs | jq '.[] | select(.identifier | contains("ydotoold")) | .libinput.accel_speed'
+# Sway - check accel_profile (should be "flat")
+swaymsg -t get_inputs | jq '.[] | select(.identifier | contains("ydotoold")) | .libinput.accel_profile'
 
 # Hyprland
 hyprctl devices | grep -A5 "ydotoold"
 ```
 
-If the value is not `0`, you need to configure it as shown above.
+If `accel_profile` is not `flat`, cursor positioning will be inaccurate.
 
 ### Default Keybindings
 
@@ -223,6 +237,13 @@ MIT License
 适用于 Wayland 的键盘驱动鼠标控制工具。keynav 的 Wayland 版本。
 
 > **关键词**: 无鼠标操作, 键盘控制鼠标, 光标导航, 辅助功能, 无障碍, RSI, 腱鞘炎预防, keynav替代, sway鼠标控制, hyprland鼠标控制, vim风格鼠标, 网格定位鼠标
+
+### 最近更新
+
+- **Sway 自动配置**: swaynav 启动时自动配置 ydotoold 设备设置（`pointer_accel 0` + `accel_profile flat`），Sway 用户无需手动配置。
+- **关键修复**: 添加 `accel_profile flat` 设置 - 这是准确定位的关键。之前只设置 `pointer_accel 0`，这还不够。
+- **光标定位修复**: 修复了 toggle 激活时光标不跟随十字中心的问题。
+- **零延迟**: 为 ydotool mousemove 添加 `--delay 0`，实现即时光标响应。
 
 ### 兼容性
 
@@ -329,19 +350,24 @@ systemctl --user enable --now swaynav
 
 ### 指针加速配置
 
-ydotoold 创建一个虚拟指针设备。如果你的合成器对所有指针设备应用指针加速，光标定位将不准确。你需要为 ydotoold 设备配置 `pointer_accel 0`。
+ydotoold 创建一个虚拟指针设备。为了准确定位光标，必须同时配置 `pointer_accel 0` 和 `accel_profile flat`。`flat` 加速模式是关键 - 如果不设置，ydotool 的绝对坐标将无法准确映射到实际光标位置。
 
-**Sway** (`~/.config/sway/config`):
+**Sway 用户**: swaynav 启动时会自动配置 ydotoold 设备，无需手动操作。如果自动配置失败，swaynav 会打印警告信息并提供手动配置指南。
+
+**其他合成器** (Hyprland、river 等): 需要手动配置 ydotoold 设备设置。
+
+**Sway** (手动配置，仅在自动配置失败时需要):
 ```
-# ydotoold 虚拟设备需要 pointer_accel 0 才能准确定位
+# ydotoold 虚拟设备需要 flat 加速模式才能准确定位
 input 9011:26214:ydotoold_virtual_device {
     pointer_accel 0
+    accel_profile flat
 }
 ```
 
 **Hyprland** (`~/.config/hypr/hyprland.conf`):
 ```
-# ydotoold 虚拟设备不需要加速
+# ydotoold 虚拟设备需要 flat 加速模式
 input-device {
     name = ydotoold virtual device
     accel_profile = flat
@@ -349,18 +375,20 @@ input-device {
 }
 ```
 
-**river**: 使用 libinput 默认值。如果应用了加速，在 init 脚本中通过 `libinput` 规则配置。
+**river**: 使用 libinput 默认值。如需要，在 init 脚本中通过 `libinput` 规则配置。
 
-**诊断**: 检查是否应用了 pointer_accel:
+**为什么 flat 模式很重要**: ydotool 发送绝对坐标（如"移动到 (500, 500)"）。使用 `adaptive` 模式时，合成器会根据移动速度/距离应用加速度，导致光标落在不同位置。使用 `flat` 模式，坐标会被准确应用。
+
+**诊断**: 检查当前设置:
 ```bash
-# Sway
-swaymsg -t get_inputs | jq '.[] | select(.identifier | contains("ydotoold")) | .libinput.accel_speed'
+# Sway - 检查 accel_profile (应该是 "flat")
+swaymsg -t get_inputs | jq '.[] | select(.identifier | contains("ydotoold")) | .libinput.accel_profile'
 
 # Hyprland
 hyprctl devices | grep -A5 "ydotoold"
 ```
 
-如果值不为 `0`，需要按上述方式配置。
+如果 `accel_profile` 不是 `flat`，光标定位将不准确。
 
 ### 默认快捷键
 

@@ -283,20 +283,32 @@ float swayipc_get_ydotoold_accel(void) {
     return -999;  /* ydotoold device not found */
 }
 
-/* Set ydotoold device pointer_accel to 0 */
+/* Set ydotoold device pointer_accel to 0 and accel_profile to flat */
 int swayipc_set_ydotoold_accel_zero(void) {
-    FILE *p = popen("swaymsg input 9011:26214:ydotoold_virtual_device pointer_accel 0", "r");
-    if (!p) return -1;
-
+    /* Set pointer_accel to 0 */
+    FILE *p1 = popen("swaymsg input 9011:26214:ydotoold_virtual_device pointer_accel 0", "r");
+    if (!p1) return -1;
+    
     char buf[256];
-    int success = 0;
-
-    /* Check for success response */
-    while (fgets(buf, sizeof(buf), p)) {
+    int success1 = 0;
+    while (fgets(buf, sizeof(buf), p1)) {
         if (strstr(buf, "true") || strstr(buf, "success")) {
-            success = 1;
+            success1 = 1;
         }
     }
-    pclose(p);
-    return success ? 0 : -1;
+    pclose(p1);
+    
+    /* Set accel_profile to flat - critical for absolute positioning */
+    FILE *p2 = popen("swaymsg input 9011:26214:ydotoold_virtual_device accel_profile flat", "r");
+    if (!p2) return -1;
+    
+    int success2 = 0;
+    while (fgets(buf, sizeof(buf), p2)) {
+        if (strstr(buf, "true") || strstr(buf, "success")) {
+            success2 = 1;
+        }
+    }
+    pclose(p2);
+    
+    return (success1 && success2) ? 0 : -1;
 }
